@@ -1,0 +1,18 @@
+AddDefaultCharset UTF-8
+RewriteEngine On
+
+# Перенаправление на HTTPS
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Перенаправление с www на non-www
+RewriteCond %{HTTP_HOST} ^www\.vstihah\.ru$ [NC]
+RewriteRule ^(.*)$ https://vstihah.ru/$1 [R=301,L]
+
+# Правило для доступа к cron скриптам
+RewriteCond %{REQUEST_URI} ^/cron/(.*\.php)$ [NC]
+RewriteCond %{DOCUMENT_ROOT}/cron/%1 -f
+RewriteRule ^cron/(.*\.php)$ cron/$1 [L]
+
+RewriteRule (.*) public/$1
